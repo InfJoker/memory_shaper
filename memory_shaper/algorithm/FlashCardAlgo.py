@@ -1,38 +1,29 @@
 from datetime import datetime, timedelta
-from math import trunc
 
 
 class FlashCardAlgorithm:
-    def __init__(self, new_question, new_answer):
-        self.question = new_question
-        self.answer = new_answer
-        self.last_shown = datetime.now()
-        self.next_show = self.last_shown + timedelta(minutes=10)
+    def __init__(self):
+        self.current_delta = 1
+        self.number_of_showings = 0
+        self.number_of_correct_ans = 0
+        self.next_show = datetime.now() + timedelta(minutes=10)
 
-    @staticmethod
-    def count_time_before_next_show(const):
-        sec = (10 * (const - 1)) * 60
-        sec = max(2 * 60, sec)
-        return timedelta(seconds=trunc(sec))
+    def count_time_before_next_show(self, correct: bool) -> timedelta:
+        if correct:
+            self.number_of_correct_ans += 1
+        percentage_of_corr_ans = self.number_of_correct_ans / self.number_of_showings
+        if correct:
+            self.current_delta += 0.5 * percentage_of_corr_ans * self.number_of_showings
+        else:
+            self.current_delta -= 0.2 * (1 - percentage_of_corr_ans) * self.number_of_showings
+        return timedelta(minutes=max(10 * self.current_delta, 2))
 
-    def reset_time(self, correct):
-        self.last_shown = datetime.now()
-        level = 5
-        if not correct:
-            level = 1
-        self.next_show = self.last_shown + self.count_time_before_next_show(level)
+    def reset_time(self, correct: bool):
+        self.number_of_showings += 1
+        self.next_show = datetime.now() + self.count_time_before_next_show(correct)
 
-    def get_next_show_time(self):
+    def get_next_show_time(self) -> datetime:
         return self.next_show
-
-    def get_answer(self):
-        return self.answer
-
-    def get_question(self):
-        return self.question
-
-    def get_last_show_time(self):
-        return self.last_shown
 
 
 def get_modified_card(elem: FlashCardAlgorithm, correct: bool) -> FlashCardAlgorithm:
