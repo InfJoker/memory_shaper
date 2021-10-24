@@ -16,7 +16,9 @@ CREATE TABLE users (
     second_name           varchar(80),
     nickname              varchar(80),
     age                   int,
-    date_of_birth         date
+    date_of_birth         date,
+    completed_deck_ids    int[],
+    personal_deck_ids     int[]
 );
 
 CREATE TABLE decks (
