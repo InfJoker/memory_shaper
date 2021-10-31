@@ -1,28 +1,30 @@
-psql -h localhost -p 5432 -U postgres #pass: p@ssw0rd
+psql -h localhost -p 5432 -U postgres
+
+#pass: p@ssw0rd
 
 --------------------------------------
 CREATE DATABASE shaper;
 \c shaper
 
+****** Now can copy-paste below ******
 
 CREATE TABLE auth_users (
-    login                 varchar(80),
-    password              varchar(65)
+    login                 varchar(80) PRIMARY KEY,
+    password              varchar(65) NOT NULL,
+    salt                  varchar(80) NOT NULL
 );
 
 CREATE TABLE users (
-    login                 varchar(80),
+    login                 varchar(80) REFERENCES auth_users (login) ON DELETE CASCADE,
     first_name            varchar(80),
     second_name           varchar(80),
-    nickname              varchar(80),
+    nickname              varchar(80) PRIMARY KEY,
     age                   int,
-    date_of_birth         date,
-    completed_deck_ids    int[],
-    personal_deck_ids     int[]
+    date_of_birth         date
 );
 
 CREATE TABLE decks (
-    id                    int,
+    id                    int PRIMARY KEY,
     name                  varchar(80),
     thematic              varchar(80),
     total_card_num        int,
@@ -30,15 +32,29 @@ CREATE TABLE decks (
 );
 
 CREATE TABLE cards (
-    id                    int,
-    deck_id               int,
+    id                    int PRIMARY KEY,
+    deck_id               int REFERENCES decks (id) ON DELETE CASCADE,
     in_deck_num           int,
     name                  varchar(80),
     translation           varchar(80),
     description           text
 );
 
+CREATE TABLE user_decks (
+    id                    int PRIMARY KEY,
+    user_nickname         varchar(80) REFERENCES users (nickname),
+    deck_id               int REFERENCES decks (id),
+    description           text
+);
 
+CREATE TABLE user_show_cards (
+    id                    int PRIMARY KEY,
+    user_nickname         varchar(80) REFERENCES users (nickname),
+    card_id               int REFERENCES cards (id),
+    next_show_date        date,
+    description           text
+);
 
 ---------------------------------------
-Insertion example: INSERT INTO auth_users VALUES ('Sam', 's3cur3_p4s5');
+Insertion example: INSERT INTO auth_users VALUES ('Sam', 's3cur3_p4s5', 's@ll!t');
+\dt - Show tables
