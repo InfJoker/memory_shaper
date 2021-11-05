@@ -2,11 +2,11 @@ from datetime import datetime, timedelta
 
 
 class FlashCardAlgorithm:
-    def __init__(self):
-        self.current_delta = 1
-        self.number_of_showings = 0
-        self.number_of_correct_ans = 0
-        self.next_show = datetime.now() + timedelta(minutes=10)
+    def __init__(self, delta, n_of_showings, n_of_correct_ans):
+        self.current_delta = delta
+        self.number_of_showings = n_of_showings
+        self.number_of_correct_ans = n_of_correct_ans
+        self.next_show = datetime.now()
 
     def count_time_before_next_show(self, correct: bool) -> timedelta:
         self.number_of_showings += 1
