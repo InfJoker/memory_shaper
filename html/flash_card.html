@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="Memory shaper" content="study, memory, prepare, card">
   <meta name="author" content="The best team ever">
+  <script>
+    function showAnswer() {
+      document.getElementById("back").style.visibility = "visible";
+      document.getElementById("front").style.visibility = "hidden";
+      document.getElementById("button-answear").style.visibility = "hidden";
+    }
+  </script>
 
   <style>
   body {
@@ -22,40 +29,75 @@
     width: 100%;
     height: 100%;
     text-align: center;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 
-  }
-
-  .flip-card-inner .flip-card {
-    transform: rotateY(180deg);
   }
 
   .flip-card-front, .flip-card-back {
     position: absolute;
     width: 100%;
     height: 100%;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
 
   .flip-card-front {
+    visibility: visible;
     background-color: #FFFAFA;
     color: black;
   }
 
   .flip-card-back {
+    visibility: hidden;
     background-color: #2980b9;
     color: white;
-    transform: rotateY(180deg);
   }
+
+  .button-correct, .button-incorrect {
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+
+  .button-correct {
+    background: linear-gradient(to bottom right, #0B8110, #7B8C00);
+  }
+
+    .button-incorrect {
+    background: linear-gradient(to bottom right, #EF4765, #FF9A5A);
+  }
+
+  .button-incorrect:not([disabled]):focus {
+    box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5);
+  }
+
+  .button-incorrect:not([disabled]):hover {
+    box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5);
+  }
+
+  .button-correct:not([disabled]):focus {
+    box-shadow: 0 0 .25rem rgba(0.5, 0, 0, 0), -.125rem -.125rem 1rem rgba(10, 231, 1, 0.5);
+  }
+
+  .button-correct:not([disabled]):hover {
+    box-shadow: 0 0 .25rem rgba(0.5, 0, 0, 0), -.125rem -.125rem 1rem rgba(10, 231, 1, 0.5);
+  }
+
   </style>
 </head>
 
 <style>
   body {
-  background-image: url('Background.jpg');
+  background-image: url('pictures/Background.jpg');
   background-attachment: fixed;
   background-size: cover;
   }
@@ -70,25 +112,27 @@
 
 <div class="flip-card">
   <div class="flip-card-inner">
-    <div class="flip-card-front">
+    <div class="flip-card-front" id="front">
       <h1>Question</h1> 
       <p>Question is here</p>
-      <p><input type="button" value="Show answer" style="height:100px; width:150px" onclick="rotate(18deg)"></p>
-      <button><img src="images/umbrella.gif" alt="Зонтик" 
-          style="vertical-align: middle"> Кнопка с рисунком</button>
     </div>
-    <div class="flip-card-back">
+    <div class="flip-card-back" id="back">
       <h1>Answer</h1> 
-      <p>Answer is here</p> 
+      <p>Answer</p>
+      <p>is</p>
+      <p>here</p>
+      <form action="путь к обработчику, который принимает данные">
+       <button class="button-correct" type="submit">Correct! </button> &nbsp;&nbsp;&nbsp;&nbsp; <button class="button-incorrect" type="submit">Incorrect! </button>
+      </form>
     </div>
   </div>
 </div>
 
 <br/>
 
-<form action="путь к обработчику, который принимает данные">
-  <p><input type="submit" value="Correct" style="height:100px; width:150px"> &nbsp;&nbsp; <input type="submit" value="Incorrect" style="height:100px; width:150px"></p>
-</form>
+<button type="submit" id="button-answear" onclick="showAnswer()" visibility="visible"><img src="pictures/arrow.jpg" width="25" height="25" alt="Arrow" style="vertical-align: middle">  Show answer</button>
+
+<br/>
 
 
 </center>
