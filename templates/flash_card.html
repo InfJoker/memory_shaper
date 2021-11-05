@@ -8,7 +8,7 @@
     function showAnswer() {
       document.getElementById("back").style.visibility = "visible";
       document.getElementById("front").style.visibility = "hidden";
-      document.getElementById("button-answear").style.visibility = "hidden";
+      document.getElementById("button-answer").style.visibility = "hidden";
     }
   </script>
 
@@ -97,7 +97,7 @@
 
 <style>
   body {
-  background-image: url('pictures/Background.jpg');
+  background-image: url('static/Background.jpg');
   background-attachment: fixed;
   background-size: cover;
   }
@@ -113,16 +113,23 @@
 <div class="flip-card">
   <div class="flip-card-inner">
     <div class="flip-card-front" id="front">
-      <h1>Question</h1> 
-      <p>Question is here</p>
+      <h1>Question</h1>
+      {% if question %}
+        <h1>{{question}}</h1>
+      {% else %}
+        <h1>Text of a question</h1>
+      {% endif %}
     </div>
     <div class="flip-card-back" id="back">
-      <h1>Answer</h1> 
-      <p>Answer</p>
-      <p>is</p>
-      <p>here</p>
-      <form action="путь к обработчику, который принимает данные">
-       <button class="button-correct" type="submit">Correct! </button> &nbsp;&nbsp;&nbsp;&nbsp; <button class="button-incorrect" type="submit">Incorrect! </button>
+      <h1>Answer</h1>
+      {% if answer %}
+        <h1>{{answer}}</h1>
+      {% else %}
+        <h1>Text of an answer</h1>
+      {% endif %}
+      <form action="{{ url_for('check_answer') }}" method=post>
+        <button class="button-correct" type="submit" name="button" value="Correct">Correct!</button> &nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="button-incorrect" type="submit" name="button" value="Incorrect">Incorrect!</button>
       </form>
     </div>
   </div>
@@ -130,7 +137,7 @@
 
 <br/>
 
-<button type="submit" id="button-answear" onclick="showAnswer()" visibility="visible"><img src="pictures/arrow.jpg" width="25" height="25" alt="Arrow" style="vertical-align: middle">  Show answer</button>
+<button type="submit" id="button-answer" onclick="showAnswer()" visibility="visible"><img src="static/arrow.jpg" width="25" height="25" alt="Arrow" style="vertical-align: middle">  Show answer</button>
 
 <br/>
 
