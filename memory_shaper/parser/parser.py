@@ -25,6 +25,6 @@ for elem in arr:
     arr2 = elem.findAll('td')
     eng_rus_vocabulary.append((arr2[1].text, arr2[2].text, freq.get(arr2[1].text, inf)))
 eng_rus_vocabulary.sort(key=lambda x : x[2])
-df = pd.DataFrame(eng_rus_vocabulary, columns=["russian", "english", "freq"])
+df = pd.DataFrame(eng_rus_vocabulary, columns=["english", "russian", "freq"])
 df.drop("freq", axis=1, inplace=True)
 df.to_csv("eng_rus.csv", index=False)
