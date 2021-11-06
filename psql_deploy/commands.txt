@@ -1,0 +1,61 @@
+psql -h localhost -p 5432 -U postgres
+
+#pass: p@ssw0rd
+
+--------------------------------------
+CREATE DATABASE shaper;
+\c shaper
+
+****** Now can copy-paste below ******
+
+CREATE TABLE auth_user (
+    login                 varchar(80) PRIMARY KEY,
+    password              varchar(65) NOT NULL,
+    salt                  varchar(80) NOT NULL
+);
+
+CREATE TABLE user (
+    login                 varchar(80) REFERENCES auth_user (login) ON DELETE CASCADE,
+    first_name            varchar(80),
+    second_name           varchar(80),
+    nickname              varchar(80) PRIMARY KEY,
+    age                   int,
+    date_of_birth         date
+);
+
+CREATE TABLE deck (
+    id                    int PRIMARY KEY,
+    name                  varchar(80),
+    thematic              varchar(80),
+    total_card_num        int,
+    description           text
+);
+
+CREATE TABLE card (
+    id                    int PRIMARY KEY,
+    deck_id               int REFERENCES deck (id) ON DELETE CASCADE,
+    in_deck_num           int,
+    name                  varchar(80),
+    card_front            varchar(80),
+    card_back             varchar(80),
+    description           text
+);
+
+CREATE TABLE user_deck (
+    id                    int PRIMARY KEY,
+    user_nickname         varchar(80) REFERENCES user (nickname),
+    deck_id               int REFERENCES deck (id),
+    description           text
+);
+
+CREATE TABLE user_show_card (
+    id                    int PRIMARY KEY,
+    user_nickname         varchar(80) REFERENCES user (nickname),
+    card_id               int REFERENCES card (id),
+    next_show_date        date,
+    description           text
+);
+
+---------------------------------------
+Insertion example: INSERT INTO auth_user VALUES ('Sam', 's3cur3_p4s5', 's@ll!t');
+\dt - Show tables
