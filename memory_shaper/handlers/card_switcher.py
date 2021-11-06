@@ -9,23 +9,15 @@ from app import app
 @app.route('/')
 def init_session():
     init_queue()
-    return redirect(url_for('card_front'))
+    return redirect(url_for('card'))
 
 
-@app.route('/card_front')
-def card_front():
+@app.route('/card')
+def card():
     queue = get_queue()
     next_time, i = queue.get()
     queue.put((next_time, i))
-    return render_template('card_front.html', text=CARDS[i].question)
-
-
-@app.route('/card_back')
-def card_back():
-    queue = get_queue()
-    next_time, i = queue.get()
-    queue.put((next_time, i))
-    return render_template('card_back.html', text=CARDS[i].answer)
+    return render_template('flash_card.html', question=CARDS[i].question, answer=CARDS[i].answer)
 
 
 @app.route('/check_answer', methods=['POST'])
@@ -34,4 +26,4 @@ def check_answer():
     next_time, i = queue.get()
     CARDS[i] = get_modified_card(CARDS[i], request.form['button'] == 'Correct')
     queue.put((CARDS[i].get_next_show_time(), i))
-    return redirect(url_for('card_front'))
+    return redirect(url_for('card'))
