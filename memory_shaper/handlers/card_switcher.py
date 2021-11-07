@@ -1,7 +1,7 @@
 from memory_shaper.algorithm.FlashCardAlgo import get_modified_card
 from memory_shaper.tmp_cards import CARDS, init_queue, get_queue
 
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, session
 
 from app import app
 
@@ -9,11 +9,24 @@ from app import app
 @app.route('/')
 def init_session():
     init_queue()
-    return redirect(url_for('card'))
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if not request.form['login'] or not request.form['password']:
+            return redirect(url_for('login'))
+        else:
+            session['login'] = request.form['login']
+            return redirect(url_for('card'))
+    return render_template('login.html')
 
 
 @app.route('/card')
 def card():
+    if 'login' not in session:
+        return redirect(url_for('login'))
     queue = get_queue()
     next_time, i = queue.get()
     queue.put((next_time, i))
