@@ -35,7 +35,7 @@ services:
       SECRET_KEY: secret
     volumes:
       - ./memory_shaper:/memory_shaper
-    command: bash -c "cd memory_shaper && python manage.py db migrate && python manage.py db upgrade"
+    command: bash -c "cd memory_shaper && python3 manage.py db upgrade"
 
   memory_shaper:
     depends_on:
@@ -46,12 +46,16 @@ services:
       dockerfile: docker/memory_shaper/Dockerfile
     networks:
       - default
+    ports:
+      - '5000:5000'
     environment:
       APP_ENVIRONMENT: Dev
       DATABASE_URL: postgresql+psycopg2://postgres:passw0rd@db:5432/shaper
       SECRET_KEY: secret
       FLASK_ENV: development
       FLASK_APP: memory_shaper/run_app.py
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
     volumes:
       - ./memory_shaper:/memory_shaper
-    command: ['python', '-m', 'flask', 'run']
+    command: ['python3', '-m', 'flask', 'run']
