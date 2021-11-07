@@ -1,0 +1,61 @@
+version: '2.1'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: passw0rd
+    networks:
+      - default
+    expose:
+      - 5432
+
+
+  db_init:
+    depends_on:
+      - db
+    image: postgres
+    networks:
+      - default
+    environment:
+      PGPASSWORD: passw0rd
+    volumes:
+      - ./psql_deploy:/psql_deploy
+    command: ['psql', '-h', 'db', '-p','5432','-U', 'postgres', '-a', '-f', 'psql_deploy/init.sql']
+
+  db-migrate:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: docker/memory_shaper/Dockerfile
+    environment:
+      APP_ENVIRONMENT: Dev
+      DATABASE_URL: postgresql+psycopg2://postgres:passw0rd@db:5432/shaper
+      SECRET_KEY: secret
+    volumes:
+      - ./memory_shaper:/memory_shaper
+    command: bash -c "cd memory_shaper && python3 manage.py db upgrade"
+
+  memory_shaper:
+    depends_on:
+      - db
+      - db-migrate
+    build:
+      context: .
+      dockerfile: docker/memory_shaper/Dockerfile
+    networks:
+      - default
+    ports:
+      - '5000:5000'
+    environment:
+      APP_ENVIRONMENT: Dev
+      DATABASE_URL: postgresql+psycopg2://postgres:passw0rd@db:5432/shaper
+      SECRET_KEY: secret
+      FLASK_ENV: development
+      FLASK_APP: memory_shaper/run_app.py
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+    volumes:
+      - ./memory_shaper:/memory_shaper
+    command: ['python3', '-m', 'flask', 'run']

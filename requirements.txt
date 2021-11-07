@@ -1,0 +1,17 @@
+alembic
+click==7.1.2
+Flask==1.1.4
+Flask-Migrate==2.5.2
+Flask-Script==2.0.6
+Flask-SQLAlchemy==2.4.1
+greenlet==1.1.2
+importlib-metadata
+importlib-resources
+itsdangerous==1.1.0
+Jinja2==2.11.3
+Mako==1.1.5
+MarkupSafe
+psycopg2==2.8.4
+SQLAlchemy==1.4.26
+Werkzeug==1.0.1
+zipp
