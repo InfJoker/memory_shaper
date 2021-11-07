@@ -9,7 +9,17 @@ from app import app
 @app.route('/')
 def init_session():
     init_queue()
-    return redirect(url_for('card'))
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if not request.form['login'] or not request.form['password']:
+            return redirect(url_for('login'))
+        else:
+            return redirect(url_for('card'))
+    return render_template('login.html')
 
 
 @app.route('/card')
