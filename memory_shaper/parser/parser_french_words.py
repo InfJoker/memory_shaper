@@ -27,6 +27,5 @@ for i in cells:
 hard_words.pop(0)
 for i in hard_words:
     french_rus.append((i[:i.find(" ", 3)], i[i.find(" ", 3) + 1:]))
-df = pd.DataFrame(french_rus, columns=["russian", "french"])
+df = pd.DataFrame(french_rus, columns=["french", "russian"])
 df.to_csv("french_rus.csv", index=False)
-
