@@ -6,8 +6,8 @@
   <meta name="author" content="The best team ever">
 
   <script>
-    function register() {
-      window.location.href="register.html";
+    function login() {
+      window.location.href="login.html";
     }
   </script>
 
@@ -263,17 +263,15 @@
 <div class="wrapper fadeInDown">
   <div id="formContent">
 
-    <h2 class="active"> Sign In</h2>
-    <h2 class="inactive underlineHover" onclick="register()">Sign Up </h2>
+    <h2 class="inactive underlineHover" onclick="login()"> Sign In</h2>
+    <h2 class="active">Sign Up </h2>
 
-    <div class="fadeIn first">
-      <img src="pictures/welcome.jpg" id="icon" alt="Greeting Icon" />
-    </div>
-
-    <form id="sign-in-form">
+    <form id="sign-up-form">
+      <input type="text" id="name" class="fadeIn second" name="name" placeholder="name">
       <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
       <input type="password" id="password_1" class="fadeIn third" name="login" placeholder="password">
-      <input type="submit" formation="PATH_TO_HANDLER" class="fadeIn fourth" value="Log In">
+      <input type="password" id="password_2" class="fadeIn third" name="login" placeholder="enter password one more time please">
+      <input type="submit" formation="PATH_TO_HANDLER" class="fadeIn fourth" value="Sign Up!">
     </form>
 
 
