@@ -7,6 +7,7 @@ from sqlalchemy.dialects.postgresql import JSON
 
 class AuthUser(db.Model):
     __tablename__ = 'auth_user'
+    __table_args__ = {'extend_existing': True}
 
     login = db.Column(db.String(80), primary_key=True)
     password = db.Column(db.String(65), nullable=False)
@@ -15,6 +16,7 @@ class AuthUser(db.Model):
 
 class User(db.Model):
     __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
 
     login = db.Column(ForeignKey('auth_user.login', ondelete='CASCADE'), nullable=False)
     nickname = db.Column(db.String(80), primary_key=True)
@@ -26,6 +28,7 @@ class User(db.Model):
 
 class Deck(db.Model):
     __tablename__ = 'deck'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.INT, primary_key=True)
     name = db.Column(db.String(80))
@@ -35,6 +38,7 @@ class Deck(db.Model):
 
 class Card(db.Model):
     __tablename__ = 'card'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.INT, primary_key=True)
     deck_id = db.Column(ForeignKey('deck.id', ondelete='CASCADE'))
@@ -46,6 +50,7 @@ class Card(db.Model):
 
 class UserDeck(db.Model):
     __tablename__ = 'user_deck'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.INT, primary_key=True)
     user_nickname = db.Column(ForeignKey('user.nickname', ondelete='CASCADE'))
@@ -57,13 +62,14 @@ class UserDeck(db.Model):
 
 class UserCard(db.Model):
     __tablename__ = 'user_card'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.INT, primary_key=True)
     user_nickname = db.Column(ForeignKey('user.nickname', ondelete='CASCADE'))
     card_id = db.Column(ForeignKey('card.id', ondelete='CASCADE'))
+    deck_id = db.Column(ForeignKey('deck.id'))
     next_show_date = db.Column(DateTime, nullable=False, default=sql.func.current_date())
     algo_data = db.Column(JSON, default=dict)
 
     card = relationship(Card)
     user = relationship(User)
-
