@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="Memory shaper" content="study, memory, prepare, card">
+  <meta name="author" content="The best team ever">
+
+  <style>
+  @import url('https://fonts.googleapis.com/css?family=Poppins');
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .flip-card {
+    background-color: transparent;
+    width: 450px;
+    height: 350px;
+    perspective: 1000px;
+    align-items: center;
+    flex-direction: column; 
+    justify-content: center;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  }
+
+  .flip-card-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    visibility: visible;
+    background-color: #FFFAFA;
+    color: black;
+  }
+
+  .button, .menu-button {
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    width: 70%;
+    height: 35%;
+    outline: transparent;
+    padding: 7px 22px;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    touch-action: manipulation;
+    white-space: nowrap;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    margin: 5px;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+    background-color: #ced3d5;
+    vertical-align: middle
+  }
+
+  .menu-button {
+    color: #a9a9a9;
+    background-color: #f6f6f6;
+    border-bottom: 2px solid #5fbae9;
+  }
+
+  .button {
+    color: #ffffff;
+    background-color: #56baed;
+    width: 60%;
+    height: 35%;
+  }
+
+  </style>
+</head>
+
+<style>
+  body {
+  background-image: url('pictures/Background.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  }
+</style>
+<center>
+
+<br/>
+
+<p><font size="35" color="white" face=fantasy>Memory sharper</font></p>
+
+<br/>
+
+<div class="flip-card">
+  <div class="flip-card-inner">
+    <div class="flip-card-front" id="front">
+      <form>
+
+        <br/>
+
+        <h1>Hello! Choose a deck to start:</h1>
+        <p><input formation="PATH_TO_HANDLER" class="menu-button" list="Decks" placeholder="here is a list"></p>
+        <datalist id="Decks">
+          <option>Deck №1</option>
+          <option>Deck №2</option>
+          <option>Deck №3</option>
+        </datalist>
+        <input type="submit" class="button" value="LET'S GO!">
+      </form>
+    </div>
+  </div>
+</div>
+
+</center>
+</html>
+
