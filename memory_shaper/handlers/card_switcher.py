@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from memory_shaper.algorithm.FlashCardAlgo import get_modified_card
+from memory_shaper.algorithm.FlashCardAlgo import get_modified_card, FlashCardAlgorithm
 from memory_shaper.tmp_cards import CARDS, init_queue, get_queue
 
 from flask import render_template, redirect, url_for, request, session
@@ -8,6 +8,7 @@ from flask import render_template, redirect, url_for, request, session
 from app import app
 from memory_shaper.app import new_sql_session
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 
 from memory_shaper import models
 
@@ -56,6 +57,32 @@ def check_answer():
     next_time, i = queue.get()
     CARDS[i] = get_modified_card(CARDS[i], request.form['button'] == 'Correct')
     queue.put((CARDS[i].get_next_show_time(), i))
+    return redirect(url_for('card'))
+
+
+@app.route('/check_answer-base', methods=['POST'])
+def check_answer_base():
+    session['current_user_card_id'] = 1  # TODO: initialize it in new /card handler
+    user_card_id = session['current_user_card_id']
+    sql_session = new_sql_session()
+    user_card = (
+        sql_session.query(models.UserCard).get(user_card_id)
+    )  # type: models.UserCard
+
+    algo_card = FlashCardAlgorithm(
+        user_card.algo_data.setdefault('delta', 1),
+        user_card.algo_data.setdefault('n_of_showings', 0),
+        user_card.algo_data.setdefault('n_of_correct_ans', 0),
+    )
+    algo_card = get_modified_card(algo_card, request.form['button'] == 'Correct')
+
+    user_card.next_show_date = algo_card.next_show
+    user_card.algo_data['delta'] = algo_card.current_delta
+    user_card.algo_data['n_of_showings'] = algo_card.number_of_showings
+    user_card.algo_data['n_of_correct_ans'] = algo_card.number_of_correct_ans
+    flag_modified(user_card, "algo_data")
+    sql_session.flush()
+    sql_session.commit()
     return redirect(url_for('card'))
 
 
