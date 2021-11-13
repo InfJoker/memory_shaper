@@ -6,20 +6,20 @@
 
 В файле [app.py](https://github.com/InfJoker/memory_shaper/blob/master/memory_shaper/app.py) у нас есть объект `Session`
 
-Если хотите делать запросы к базе то создаете эту сессию:
+Если хотите делать запросы к базе то создаете эту сессию c помощью `new_sql_session`:
 ```python
-from app import Session
-sql_session = Session()
+from memory_shaper.app import new_sql_session
+sql_session = new_sql_session()
 ```
 и работаете с ней.
 
 Гайд можно прочитать начиная отсюда https://docs.sqlalchemy.org/en/13/orm/session_basics.html#basics-of-using-a-session
 
-Договоримся, что  если пишем `sql_session.add(something)` или `sql_session.delete(something)` то пишем его в блоке `sql_session.begin()`
+Договоримся, что  если пишем `sql_session.add(something)` или `sql_session.delete(something)` то в конце пишем `sql_session.commit()`
 
 Пример:
 ```python
-with sql_session.begin():
-    sql_session.add(something)
+sql_session.add(something)
+sql_session.commit(something)
 ```
-Тогда не появляется лишней возьни с `commit` и `rollback` (вам о них не нужно будет думать вообще)
+Нужно переделать, чтобы работало с `session.begin()` но сейчас не об этом
