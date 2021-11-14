@@ -107,7 +107,11 @@ def card():
         return redirect(url_for('login'))
     sql_session = new_sql_session()
     user_card = (
-        sql_session.query(models.UserCard).filter(models.UserCard.deck_id == session['current_deck_id']).order_by(models.UserCard.next_show_date).limit(1).one_or_none()
+        sql_session.query(models.UserCard)
+        .filter(models.UserCard.deck_id == session['current_deck_id'])
+        .order_by(models.UserCard.next_show_date)
+        .limit(1)
+        .one_or_none()
     )  # type: Optional[models.UserCard]
     card_ = user_card.card
     session['current_user_card_id'] = user_card.id
@@ -164,7 +168,11 @@ def fill_user_deck(sql_session: Session, user_deck: models.UserDeck) -> int:
         .all()
     )  # type: List[models.Card]
     for card in cards_to_fill:
-        instance = models.UserCard(user=user_deck.user, deck_id=user_deck.deck_id, card=card)
+        instance = models.UserCard(
+            user_nickname=user_deck.user_nickname,
+            deck_id=user_deck.deck_id,
+            card_id=card.id
+        )
         sql_session.add(instance)
     sql_session.commit()
     return len(cards_to_fill)
