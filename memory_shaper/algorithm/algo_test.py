@@ -4,7 +4,7 @@ import FlashCardAlgo
 
 
 def test_count_time_before_next_show_false():
-    f = FlashCardAlgo.FlashCardAlgorithm()
+    f = FlashCardAlgo.FlashCardAlgorithm(1, 0, 0)
     prev_delta = f.current_delta
     time_d = f.count_time_before_next_show(False)
     assert(f.current_delta < prev_delta)
@@ -12,7 +12,7 @@ def test_count_time_before_next_show_false():
 
 
 def test_count_time_before_next_show_true():
-    f = FlashCardAlgo.FlashCardAlgorithm()
+    f = FlashCardAlgo.FlashCardAlgorithm(1, 0, 0)
     prev_delta = f.current_delta
     time_d = f.count_time_before_next_show(True)
     assert(f.current_delta > prev_delta)
@@ -20,6 +20,6 @@ def test_count_time_before_next_show_true():
 
 
 def test_reset_time():
-    f = FlashCardAlgo.FlashCardAlgorithm()
+    f = FlashCardAlgo.FlashCardAlgorithm(1, 0, 0)
     f.reset_time(True)
     assert(datetime.now() < f.next_show)
