@@ -51,6 +51,20 @@ def card():
     return render_template('flash_card.html', question=CARDS[i].question, answer=CARDS[i].answer)
 
 
+@app.route('/card_base', methods=['GET'])
+def card_base():
+    if 'login' not in session:
+        return redirect(url_for('login'))
+    session['current_deck_id'] = 1
+    sql_session = new_sql_session()
+    user_card = (
+        sql_session.query(models.UserCard).filter(models.UserCard.deck_id == session['current_deck_id']).order_by(models.UserCard.next_show_date).limit(1).one_or_none()
+    )  # type: Optional[models.UserCard]
+    card_ = user_card.card
+    session['current_user_card_id'] = user_card.id
+    return render_template('flash_card.html', question=card_.card_front, answer=card_.card_back)
+
+
 @app.route('/check_answer', methods=['POST'])
 def check_answer():
     queue = get_queue()
