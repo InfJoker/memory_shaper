@@ -12,6 +12,10 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from memory_shaper import models
 
+import random
+import string
+import hashlib
+
 
 @app.route('/')
 def init_session():
@@ -25,21 +29,58 @@ def login():
         if not request.form['login'] or not request.form['password']:
             return redirect(url_for('login'))
         else:
-            session['login'] = request.form['login']
             sql_session = new_sql_session()
             user = (
-                sql_session.query(models.User).filter_by(login=session['login']).one_or_none()
+                sql_session.query(models.User).filter_by(login=request.form['login']).one_or_none()
             )  # type: Optional[models.User]
 
-            session['user_nickname'] = user.nickname
+            user_cred = (
+                sql_session.query(models.AuthUser).filter_by(login=request.form['login']).one_or_none()
+            )  # type: Optional[models.AuthUser]
 
-            if user is None:
+            if user is None or hash_from_string(request.form['password'] + user_cred.salt) != user_cred.password:
                 return redirect(url_for('login'))
+
+            session['login'] = request.form['login']
+            session['user_nickname'] = user.nickname
 
             update_user_decks(sql_session, user)
             return redirect(url_for('card'))
     return render_template('login.html')
 
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        if not request.form['name'] or not request.form['login'] or not request.form['password']:
+            return redirect(url_for('signup'))
+        else:
+            form_name, form_login, form_password = \
+                request.form['name'], request.form['login'], request.form['password']
+
+            # check that there is no user with this nickname or login
+            sql_session = new_sql_session()
+            user = (
+                sql_session.query(models.AuthUser).filter_by(login=form_login).one_or_none()
+            )  # type: Optional[models.AuthUser]
+            if user is not None:
+                return render_template('register.html')
+            user = (
+                sql_session.query(models.User).filter_by(nickname=form_name).one_or_none()
+            )  # type: Optional[models.User]
+            if user is not None:
+                return render_template('register.html')
+
+            # add user to database
+            salt = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            auth_user = models.AuthUser(login=form_login, password=hash_from_string(form_password + salt), salt=salt)
+            sql_session.add(auth_user)
+            sql_session.add(models.User(login=form_login, nickname=form_name, auth_user=auth_user))
+            sql_session.add(models.UserDeck(user_nickname=form_name, deck_id=1))
+            sql_session.commit()
+
+            return redirect(url_for('login'))
+    return render_template('register.html')
 
 
 @app.route('/card', methods=['GET'])
@@ -106,3 +147,7 @@ def fill_user_deck(sql_session: Session, user_deck: models.UserDeck) -> int:
         sql_session.add(instance)
     sql_session.commit()
     return len(cards_to_fill)
+
+
+def hash_from_string(text: str):
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
