@@ -70,6 +70,5 @@ class UserCard(db.Model):
     deck_id = db.Column(ForeignKey('deck.id'))
     next_show_date = db.Column(DateTime, nullable=False, default=sql.func.current_date())
     algo_data = db.Column(JSON, default=dict)
-
     card = relationship(Card)
-    user = relationship(User)
+    user = relationship(User, viewonly=True)
