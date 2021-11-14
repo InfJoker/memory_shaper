@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install -y postgresql-client python3-pip libpq-dev  && apt-get clean
 

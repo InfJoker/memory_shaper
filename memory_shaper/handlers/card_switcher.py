@@ -46,7 +46,6 @@ def login():
             session['login'] = request.form['login']
             session['user_nickname'] = user.nickname
 
-            update_user_decks(sql_session, user)
             return redirect(url_for('deck_list'))
     return render_template('login.html')
 
@@ -89,6 +88,7 @@ def signup():
 @app.route('/deck-list', methods=['GET', 'POST'])
 def deck_list():
     sql_session = new_sql_session()
+    update_user_decks(sql_session, session['user_nickname'])
     if request.method == 'POST':
         form_deck_id = request.form['button']
         session['current_deck_id'] = form_deck_id
@@ -111,7 +111,11 @@ def card():
     )  # type: Optional[models.UserCard]
     card_ = user_card.card
     session['current_user_card_id'] = user_card.id
-    return render_template('flash_card.html', question=card_.card_front, answer=card_.card_back)
+    return render_template(
+        'flash_card.html',
+        question=card_.card_front.strip().capitalize(),
+        answer=card_.card_back.strip().capitalize(),
+    )
 
 
 @app.route('/check_answer', methods=['POST'])
@@ -140,9 +144,9 @@ def check_answer():
     return redirect(url_for('card'))
 
 
-def update_user_decks(sql_session: Session, user: models.User) -> None:
+def update_user_decks(sql_session: Session, user_nickname: str) -> None:
     user_decks = (
-        sql_session.query(models.UserDeck).filter_by(user_nickname=user.nickname).all()
+        sql_session.query(models.UserDeck).filter_by(user_nickname=user_nickname).all()
     )  # type: List[models.UserDeck]
     for user_deck in user_decks:
         fill_user_deck(sql_session, user_deck)
