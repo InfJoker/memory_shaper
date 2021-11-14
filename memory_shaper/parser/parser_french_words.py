@@ -9,7 +9,7 @@ block = soup.find("div", dir="ltr")
 words = [x[1:] for x in block.contents if x != '\n' and type(x) == NavigableString]
 french_rus = []
 for i in words:
-    french_rus.append((i[:i.rfind("-")], i[i.rfind("-") + 1:]))
+    french_rus.append((i[:i.rfind("-")].capitalize(), i[i.rfind("-") + 1:].capitalize()))
 url = "https://www.divelang.ru/blog/useful/30-samykh-trudnoproiznosimykh-slov-na-frantsuzskom-yazyke/"
 response = requests.get(url).text
 soup = BeautifulSoup(response, "lxml")
@@ -26,6 +26,6 @@ for i in cells:
     hard_words.append(s)
 hard_words.pop(0)
 for i in hard_words:
-    french_rus.append((i[:i.find(" ", 3)], i[i.find(" ", 3) + 1:]))
+    french_rus.append((i[:i.find(" ", 3)].capitalize(), i[i.find(" ", 3) + 1:].capitalize()))
 df = pd.DataFrame(french_rus, columns=["french", "russian"])
 df.to_csv("french_rus.csv", index=False)
