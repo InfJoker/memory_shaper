@@ -56,14 +56,9 @@ def card():
     return render_template('flash_card.html', question=card_.card_front, answer=card_.card_back)
 
 
-<<<<<<< HEAD
 @app.route('/check_answer', methods=['POST'])
 def check_answer():
-=======
-@app.route('/check_answer_base', methods=['POST'])
-def check_answer_base():
-    # session['current_user_card_id'] = 1  # TODO: initialize it in new /card handler
->>>>>>> 698c25aecbaa72dd0fd4cde05645ebaf0507450c
+
     user_card_id = session['current_user_card_id']
     sql_session = new_sql_session()
     user_card = (
@@ -84,7 +79,7 @@ def check_answer_base():
     flag_modified(user_card, "algo_data")
     sql_session.flush()
     sql_session.commit()
-    return redirect(url_for('card_base'))
+    return redirect(url_for('card'))
 
 
 def update_user_decks(sql_session: Session, user: models.User) -> None:
