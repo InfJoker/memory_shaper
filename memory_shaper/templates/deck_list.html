@@ -106,7 +106,7 @@
 
         <h1>Hello! Choose a deck to start:</h1>
           {% for user_deck in user_decks %}
-            <button name="button" type="submit" class="menu-button" value={{ user_deck.id }}>{{ user_deck.deck.name }}</button>
+            <button name="button" type="submit" class="menu-button" value={{ user_deck.deck_id }}>{{ user_deck.deck.name }}</button>
           {% else %}
               <h2>Looks like you've got no decks!</h2>
           {% endfor %}
