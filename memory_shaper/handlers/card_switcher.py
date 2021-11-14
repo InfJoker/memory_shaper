@@ -37,7 +37,7 @@ def login():
                 return redirect(url_for('login'))
 
             update_user_decks(sql_session, user)
-            return redirect(url_for('card_base'))
+            return redirect(url_for('card'))
     return render_template('login.html')
 
 
