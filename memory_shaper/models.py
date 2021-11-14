@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from sqlalchemy.dialects.postgresql import JSON
+import hashlib
 
 
 class AuthUser(db.Model):
@@ -12,6 +13,10 @@ class AuthUser(db.Model):
     login = db.Column(db.String(80), primary_key=True)
     password = db.Column(db.String(65), nullable=False)
     salt = db.Column(db.String(80), nullable=False)
+
+    @staticmethod
+    def hash_from_string(text: str):
+        return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
 class User(db.Model):

@@ -38,7 +38,9 @@ def login():
                 sql_session.query(models.AuthUser).filter_by(login=request.form['login']).one_or_none()
             )  # type: Optional[models.AuthUser]
 
-            if user is None or hash_from_string(request.form['password'] + user_cred.salt) != user_cred.password:
+            if user is None:
+                return redirect(url_for('login'))
+            if models.AuthUser.hash_from_string(request.form['password'] + user_cred.salt) != user_cred.password:
                 return redirect(url_for('login'))
 
             session['login'] = request.form['login']
@@ -55,8 +57,7 @@ def signup():
         if not request.form['name'] or not request.form['login'] or not request.form['password']:
             return redirect(url_for('signup'))
         else:
-            form_name, form_login, form_password = \
-                request.form['name'], request.form['login'], request.form['password']
+            form_name, form_login, form_password = request.form['name'], request.form['login'], request.form['password']
 
             # check that there is no user with this nickname or login
             sql_session = new_sql_session()
@@ -73,7 +74,9 @@ def signup():
 
             # add user to database
             salt = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-            auth_user = models.AuthUser(login=form_login, password=hash_from_string(form_password + salt), salt=salt)
+            auth_user = models.AuthUser(login=form_login,
+                                        password=models.AuthUser.hash_from_string(form_password + salt),
+                                        salt=salt)
             sql_session.add(auth_user)
             sql_session.add(models.User(login=form_login, nickname=form_name, auth_user=auth_user))
             sql_session.add(models.UserDeck(user_nickname=form_name, deck_id=1))
@@ -147,7 +150,3 @@ def fill_user_deck(sql_session: Session, user_deck: models.UserDeck) -> int:
         sql_session.add(instance)
     sql_session.commit()
     return len(cards_to_fill)
-
-
-def hash_from_string(text: str):
-    return hashlib.sha256(text.encode('utf-8')).hexdigest()
