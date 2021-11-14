@@ -255,6 +255,10 @@
     <h2 class="inactive underlineHover" onclick="login()"> Sign In</h2>
     <h2 class="active">Sign Up </h2>
 
+    {% if error %}
+        <h1>Error: {{error}}</h1>
+    {% endif %}
+
     <div class="fadeIn first">
       <img src="static/welcome.jpg" id="icon" alt="Greeting Icon" />
     </div>

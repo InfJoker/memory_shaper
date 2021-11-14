@@ -27,7 +27,7 @@ def init_session():
 def login():
     if request.method == 'POST':
         if not request.form['login'] or not request.form['password']:
-            return redirect(url_for('login'))
+            return render_template('login.html', error='No login or password provided')
         else:
             sql_session = new_sql_session()
             user = (
@@ -39,9 +39,9 @@ def login():
             )  # type: Optional[models.AuthUser]
 
             if user is None:
-                return redirect(url_for('login'))
+                return render_template('login.html', error='No user with this login')
             if models.AuthUser.hash_from_string(request.form['password'] + user_cred.salt) != user_cred.password:
-                return redirect(url_for('login'))
+                return render_template('login.html', error='Incorrect password')
 
             session['login'] = request.form['login']
             session['user_nickname'] = user.nickname
@@ -55,7 +55,7 @@ def login():
 def signup():
     if request.method == 'POST':
         if not request.form['name'] or not request.form['login'] or not request.form['password']:
-            return redirect(url_for('signup'))
+            return render_template('register.html', error='No nickname, login or password provided')
         else:
             form_name, form_login, form_password = request.form['name'], request.form['login'], request.form['password']
 
@@ -65,12 +65,12 @@ def signup():
                 sql_session.query(models.AuthUser).filter_by(login=form_login).one_or_none()
             )  # type: Optional[models.AuthUser]
             if user is not None:
-                return render_template('register.html')
+                return render_template('register.html', error='User with this login already exists')
             user = (
                 sql_session.query(models.User).filter_by(nickname=form_name).one_or_none()
             )  # type: Optional[models.User]
             if user is not None:
-                return render_template('register.html')
+                return render_template('register.html', error='User with this nickname already exists')
 
             # add user to database
             salt = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
