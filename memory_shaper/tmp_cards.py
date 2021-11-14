@@ -5,7 +5,7 @@ from algorithm.FlashCardAlgo import FlashCardAlgorithm
 
 class FlashCard(FlashCardAlgorithm):
     def __init__(self, question: str, answer: str):
-        super(FlashCard, self).__init__()
+        super(FlashCard, self).__init__(1, 0, 0)
         self.question = question
         self.answer = answer
 
