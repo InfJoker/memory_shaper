@@ -7,7 +7,7 @@
 
   <script>
     function login() {
-      window.location.href="login.html";
+      window.location.href="{{ url_for('login') }}";
     }
   </script>
 
@@ -255,14 +255,18 @@
     <h2 class="inactive underlineHover" onclick="login()"> Sign In</h2>
     <h2 class="active">Sign Up </h2>
 
+    {% if error %}
+        <h1>Error: {{error}}</h1>
+    {% endif %}
+
     <div class="fadeIn first">
-      <img src="pictures/welcome.jpg" id="icon" alt="Greeting Icon" />
+      <img src="static/welcome.jpg" id="icon" alt="Greeting Icon" />
     </div>
 
-    <form id="sign-up-form">
+    <form id="sign-up-form" action="{{ url_for('signup') }}" method="post">
       <input type="text" id="name" class="fadeIn second" name="name" placeholder="name">
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-      <input type="password" id="password_1" class="fadeIn third" name="login" placeholder="password">
+      <input type="text" id="login" class="fadeIn third" name="login" placeholder="login">
+      <input type="password" id="password_1" class="fadeIn fourth" name="password" placeholder="password">
       <input type="submit" formation="PATH_TO_HANDLER" class="fadeIn fourth" value="Sign Up">
     </form>
 
