@@ -138,7 +138,9 @@
 <br/>
 
 <button type="submit" id="button-answer" onclick="showAnswer()" visibility="visible"><img src="static/arrow.jpg" width="25" height="25" alt="Arrow" style="vertical-align: middle">  Show answer</button>
-
+  <form action="{{ url_for('deck_list') }}" method=get>
+    <button type="submit" style="vertical-align: middle; margin-top: 5px">  Change deck </button>
+  </form>
 <br/>
 
 
