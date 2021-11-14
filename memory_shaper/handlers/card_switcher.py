@@ -37,18 +37,9 @@ def login():
                 return redirect(url_for('login'))
 
             update_user_decks(sql_session, user)
-            return redirect(url_for('card'))
+            return redirect(url_for('card_base'))
     return render_template('login.html')
 
-
-@app.route('/card')
-def card():
-    if 'login' not in session:
-        return redirect(url_for('login'))
-    queue = get_queue()
-    next_time, i = queue.get()
-    queue.put((next_time, i))
-    return render_template('flash_card.html', question=CARDS[i].question, answer=CARDS[i].answer)
 
 
 @app.route('/card_base', methods=['GET'])
@@ -65,18 +56,9 @@ def card_base():
     return render_template('flash_card.html', question=card_.card_front, answer=card_.card_back)
 
 
-@app.route('/check_answer', methods=['POST'])
-def check_answer():
-    queue = get_queue()
-    next_time, i = queue.get()
-    CARDS[i] = get_modified_card(CARDS[i], request.form['button'] == 'Correct')
-    queue.put((CARDS[i].get_next_show_time(), i))
-    return redirect(url_for('card'))
-
-
-@app.route('/check_answer-base', methods=['POST'])
+@app.route('/check_answer_base', methods=['POST'])
 def check_answer_base():
-    session['current_user_card_id'] = 1  # TODO: initialize it in new /card handler
+    # session['current_user_card_id'] = 1  # TODO: initialize it in new /card handler
     user_card_id = session['current_user_card_id']
     sql_session = new_sql_session()
     user_card = (
@@ -97,7 +79,7 @@ def check_answer_base():
     flag_modified(user_card, "algo_data")
     sql_session.flush()
     sql_session.commit()
-    return redirect(url_for('card'))
+    return redirect(url_for('card_base'))
 
 
 def update_user_decks(sql_session: Session, user: models.User) -> None:
