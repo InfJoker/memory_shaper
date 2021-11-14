@@ -47,7 +47,7 @@ def login():
             session['user_nickname'] = user.nickname
 
             update_user_decks(sql_session, user)
-            return redirect(url_for('card'))
+            return redirect(url_for('deck_list'))
     return render_template('login.html')
 
 
@@ -86,11 +86,25 @@ def signup():
     return render_template('register.html')
 
 
+@app.route('/deck-list', methods=['GET', 'POST'])
+def deck_list():
+    sql_session = new_sql_session()
+    if request.method == 'POST':
+        form_deck_id = request.form['button']
+        session['current_deck_id'] = form_deck_id
+        return redirect(url_for('card'))
+    user_decks = (
+        sql_session.query(models.UserDeck)
+        .filter_by(user_nickname=session['user_nickname'])
+        .all()
+    )  # type: List[models.UserDeck]
+    return render_template('deck_list.html', user_decks=user_decks)
+
+
 @app.route('/card', methods=['GET'])
 def card():
     if 'login' not in session:
         return redirect(url_for('login'))
-    session['current_deck_id'] = 1
     sql_session = new_sql_session()
     user_card = (
         sql_session.query(models.UserCard).filter(models.UserCard.deck_id == session['current_deck_id']).order_by(models.UserCard.next_show_date).limit(1).one_or_none()
