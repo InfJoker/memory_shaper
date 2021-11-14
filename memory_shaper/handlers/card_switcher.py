@@ -55,12 +55,12 @@ def card_base():
     if 'login' not in session:
         return redirect(url_for('login'))
     session['current_deck_id'] = 1
-    session['current_user_card_id'] = 1
     sql_session = new_sql_session()
-    User_card = (
+    user_card = (
         sql_session.query(models.UserCard).filter(models.UserCard.deck_id == session['current_deck_id']).order_by(models.UserCard.next_show_date).limit(1).one_or_none()
     )  # type: Optional[models.UserCard]
-    card_ = User_card.card
+    card_ = user_card.card
+    session['current_user_card_id'] = user_card.id
     return render_template('flash_card.html', question=card_.card_front, answer=card_.card_back)
 
 
@@ -88,9 +88,9 @@ def fill_user_deck(sql_session: Session, user_deck: models.UserDeck) -> int:
     cards_in_deck_ids = [user_card.card_id for user_card in user_cards]
     cards_to_fill = (
         sql_session.query(models.Card)
-            .filter_by(deck_id=user_deck.deck_id)
-            .filter(models.Card.id.not_in(cards_in_deck_ids))
-            .all()
+        .filter_by(deck_id=user_deck.deck_id)
+        .filter(models.Card.id.not_in(cards_in_deck_ids))
+        .all()
     )  # type: List[models.Card]
     for card in cards_to_fill:
         instance = models.UserCard(user=user_deck.user, deck_id=user_deck.deck_id, card=card)
