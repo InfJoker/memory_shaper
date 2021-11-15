@@ -2,7 +2,7 @@
 
 Web-cервис для работы с [flash-карточками](https://en.wikipedia.org/wiki/Flashcard).
 
-TODO: дописать описание
+[Презентация](https://www.canva.com/design/DAEvtLso758/XvV7IUnFqkkS-UJnjgFQ3Q/view?utm_content=DAEvtLso758&utm_campaign=designshare&utm_medium=link&utm_source=sharebutton)
 
 ## Как поднять локально
 
