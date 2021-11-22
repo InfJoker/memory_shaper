@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from memory_shaper.algorithm.FlashCardAlgo import get_modified_card, FlashCardAlgorithm
@@ -14,7 +15,9 @@ from memory_shaper import models
 
 import random
 import string
-import hashlib
+
+
+logger = logging.getLogger(app.config['APP_NAME'])
 
 
 @app.route('/')
@@ -27,6 +30,7 @@ def init_session():
 def login():
     if request.method == 'POST':
         if not request.form['login'] or not request.form['password']:
+            logger.error('Failed login: No login or password provided')
             return render_template('login.html', error='No login or password provided')
         else:
             sql_session = new_sql_session()
@@ -46,6 +50,8 @@ def login():
             session['login'] = request.form['login']
             session['user_nickname'] = user.nickname
 
+            logger.info('Logged in for user {user}'.format(user=user.nickname))
+
             return redirect(url_for('deck_list'))
     return render_template('login.html')
 
@@ -54,6 +60,7 @@ def login():
 def signup():
     if request.method == 'POST':
         if not request.form['name'] or not request.form['login'] or not request.form['password']:
+            logger.error('Failed login: No nickname, login or password provided')
             return render_template('register.html', error='No nickname, login or password provided')
         else:
             form_name, form_login, form_password = request.form['name'], request.form['login'], request.form['password']
@@ -64,11 +71,13 @@ def signup():
                 sql_session.query(models.AuthUser).filter_by(login=form_login).one_or_none()
             )  # type: Optional[models.AuthUser]
             if user is not None:
+                logger.error('Failed login: User with this login already exists')
                 return render_template('register.html', error='User with this login already exists')
             user = (
                 sql_session.query(models.User).filter_by(nickname=form_name).one_or_none()
             )  # type: Optional[models.User]
             if user is not None:
+                logger.error('Failed login: User with this nickname already exists')
                 return render_template('register.html', error='User with this nickname already exists')
 
             # add user to database
@@ -81,6 +90,8 @@ def signup():
             sql_session.add(models.UserDeck(user_nickname=form_name, deck_id=1))
             sql_session.commit()
 
+            logger.info('New user registered - {user}'.format(user=form_name))
+
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -92,18 +103,21 @@ def deck_list():
     if request.method == 'POST':
         form_deck_id = request.form['button']
         session['current_deck_id'] = form_deck_id
+        logger.info('User {user} chose deck with deck_id {deck_id}'.format(user=session['user_nickname'], deck_id=form_deck_id))
         return redirect(url_for('card'))
     user_decks = (
         sql_session.query(models.UserDeck)
         .filter_by(user_nickname=session['user_nickname'])
         .all()
     )  # type: List[models.UserDeck]
+    logger.info('User {user} choosing deck'.format(user=session['user_nickname']))
     return render_template('deck_list.html', user_decks=user_decks)
 
 
 @app.route('/card', methods=['GET'])
 def card():
     if 'login' not in session:
+        logger.info('Accessing card page without log in')
         return redirect(url_for('login'))
     sql_session = new_sql_session()
     user_card = (
@@ -115,6 +129,10 @@ def card():
     )  # type: Optional[models.UserCard]
     card_ = user_card.card
     session['current_user_card_id'] = user_card.id
+    logger.info(
+        'User {user} chose card_id {card_id} from deck_id {deck_id}'
+        .format(user=session['user_nickname'], deck_id=session['current_deck_id'], card_id=session['current_user_card_id'])
+    )
     return render_template(
         'flash_card.html',
         question=card_.card_front.strip().capitalize(),
@@ -124,7 +142,6 @@ def card():
 
 @app.route('/check_answer', methods=['POST'])
 def check_answer():
-
     user_card_id = session['current_user_card_id']
     sql_session = new_sql_session()
     user_card = (
@@ -145,6 +162,17 @@ def check_answer():
     flag_modified(user_card, "algo_data")
     sql_session.flush()
     sql_session.commit()
+
+    if request.form['button'] == 'Correct':
+        logger.info(
+            'User {user} chose card_id {card_id} from deck_id {deck_id} succeeded card'
+            .format(user=session['user_nickname'], deck_id=session['current_deck_id'], card_id=session['current_user_card_id'])
+        )
+    else:
+        logger.info(
+            'User {user} chose card_id {card_id} from deck_id {deck_id} failed card'
+            .format(user=session['user_nickname'], deck_id=session['current_deck_id'], card_id=session['current_user_card_id'])
+        )
     return redirect(url_for('card'))
 
 
