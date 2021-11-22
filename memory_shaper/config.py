@@ -6,6 +6,8 @@ class Config(object):
     TESTING = False
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    CSV_LOG_FILE = 'log/memory_shaper.csv'
+    APP_NAME = 'memory_shaper'
 
 
 class Prod(Config):
